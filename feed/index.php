@@ -261,9 +261,16 @@ EOF;
             'summary' => $desc,
             'description' => $desc,
             'pubdate' => $pubdatefmt,
-            'thumbnail' => $item->thumbnail
+            'thumbnail' => $item->thumbnail,
+            'score' => $item->score,
         );
     } // foreach
+
+    if (isset($_REQUEST['limit']) && is_numeric($_REQUEST['limit'])) {
+        $limit = $_REQUEST['limit'];
+        usort($items, function($a, $b) { return $a['score'] - $b['score']; });
+        $items = array_slice($items, 0, (int)$limit);
+    }
 
     doWriteXml($ok, $io, $channel);
     doWrite($ok, $io, '<image>');
